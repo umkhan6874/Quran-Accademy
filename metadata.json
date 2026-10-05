@@ -1,0 +1,8 @@
+{
+  "name": "Quran Tutor Academy",
+  "description": "World-class 100% free Quran tutor academy for kids and adults with interactive Noorani Qaida, Tajweed, Quran reader, live classroom, and verified teachers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
