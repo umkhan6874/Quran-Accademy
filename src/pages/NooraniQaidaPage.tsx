@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { qaidaLessonsData } from '../data/quranData';
 import { QaidaLesson, QaidaItem } from '../types';
-import { Volume2, CheckCircle2, Sparkles, HelpCircle, ArrowLeft, Award, Play } from 'lucide-react';
+import { Volume2, CheckCircle2, Sparkles, HelpCircle, ArrowLeft, Award, Play, RotateCcw } from 'lucide-react';
 import { FreeBadge } from '../components/FreeBadge';
 import confetti from 'canvas-confetti';
 
@@ -19,16 +19,54 @@ export const NooraniQaidaPage: React.FC<NooraniQaidaPageProps> = ({
   const [selectedLesson, setSelectedLesson] = useState<QaidaLesson>(qaidaLessonsData[0]);
   const [selectedItem, setSelectedItem] = useState<QaidaItem>(selectedLesson.items[0]);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [quizQuestionIndex, setQuizQuestionIndex] = useState(0);
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizTarget, setQuizTarget] = useState<QaidaItem>(selectedLesson.items[0]);
+  const [quizOptions, setQuizOptions] = useState<QaidaItem[]>([]);
+  const [quizFeedback, setQuizFeedback] = useState<'correct' | 'wrong' | null>(null);
 
   const isCompleted = completedLessons.includes(selectedLesson.id);
 
+  // Play gentle web audio chime + speak pronunciation
+  const playSoundEffect = (freq = 440) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      }
+    } catch {
+      // AudioContext fallback
+    }
+  };
+
   const speakLetter = (item: QaidaItem) => {
     setSelectedItem(item);
+    playSoundEffect(520);
+
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(item.name);
-      utterance.rate = 0.9;
+      // Try Arabic pronunciation first
+      const utterance = new SpeechSynthesisUtterance(item.symbol);
+      utterance.lang = 'ar-SA';
+      utterance.rate = 0.85;
+
+      utterance.onerror = () => {
+        // Fallback to letter name in English
+        const fallback = new SpeechSynthesisUtterance(item.name);
+        fallback.rate = 0.9;
+        window.speechSynthesis.speak(fallback);
+      };
+
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -42,12 +80,38 @@ export const NooraniQaidaPage: React.FC<NooraniQaidaPageProps> = ({
     });
   };
 
-  const handleQuizAnswer = (correct: boolean) => {
-    if (correct) {
-      setQuizScore(100);
-      confetti({ particleCount: 50, spread: 60 });
+  // Setup new dynamic quiz question
+  const initQuizQuestion = () => {
+    const items = selectedLesson.items;
+    const randomIndex = Math.floor(Math.random() * items.length);
+    const target = items[randomIndex];
+    setQuizTarget(target);
+
+    // Pick 2 other distinct items
+    const others = items.filter(x => x.symbol !== target.symbol);
+    const shuffledOthers = [...others].sort(() => 0.5 - Math.random());
+    const distractors = shuffledOthers.slice(0, 2);
+
+    const options = [target, ...distractors].sort(() => 0.5 - Math.random());
+    setQuizOptions(options);
+    setQuizFeedback(null);
+  };
+
+  useEffect(() => {
+    if (showQuiz) {
+      initQuizQuestion();
+    }
+  }, [showQuiz, selectedLesson]);
+
+  const handleAnswerClick = (option: QaidaItem) => {
+    if (option.symbol === quizTarget.symbol) {
+      setQuizFeedback('correct');
+      setQuizScore(prev => prev + 1);
+      playSoundEffect(659);
+      confetti({ particleCount: 40, spread: 60 });
     } else {
-      setQuizScore(50);
+      setQuizFeedback('wrong');
+      playSoundEffect(260);
     }
   };
 
@@ -66,7 +130,7 @@ export const NooraniQaidaPage: React.FC<NooraniQaidaPageProps> = ({
               <FreeBadge />
             </div>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-              Interactive Arabic Alphabets, Short Vowels & Makharij Pronunciation
+              Interactive Arabic Alphabets, Short Vowels & Makharij Articulation
             </p>
           </div>
         </div>
@@ -96,6 +160,7 @@ export const NooraniQaidaPage: React.FC<NooraniQaidaPageProps> = ({
               onClick={() => {
                 setSelectedLesson(lesson);
                 setSelectedItem(lesson.items[0]);
+                setShowQuiz(false);
               }}
               style={{
                 padding: '10px 18px',
@@ -134,56 +199,89 @@ export const NooraniQaidaPage: React.FC<NooraniQaidaPageProps> = ({
             <p style={{ fontSize: '13px', opacity: 0.9, marginTop: '2px' }}>{selectedLesson.description}</p>
           </div>
           <button
-            onClick={() => { setShowQuiz(!showQuiz); setQuizScore(null); }}
+            onClick={() => {
+              setShowQuiz(!showQuiz);
+              setQuizScore(0);
+              setQuizQuestionIndex(0);
+            }}
             className="btn-gold"
             style={{ padding: '8px 16px', fontSize: '13px' }}
           >
             <HelpCircle size={15} />
-            <span>Practice Recognition Quiz</span>
+            <span>{showQuiz ? 'Close Practice Quiz' : 'Interactive Recognition Quiz'}</span>
           </button>
         </div>
       </div>
 
-      {/* Quiz Card Modal */}
+      {/* Dynamic Practice Quiz Card */}
       {showQuiz && (
         <div className="card" style={{ border: '2px solid var(--gold)', background: 'var(--gold-container)' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px' }}>Letter Recognition Challenge!</h3>
-          <p style={{ fontSize: '13px', color: 'var(--on-gold-container)', marginBottom: '14px' }}>
-            Identify this letter and its pronunciation point:
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
-            <div className="arabic-text" style={{
-              fontSize: '48px',
-              fontWeight: 800,
-              padding: '10px 30px',
-              background: 'var(--surface)',
-              borderRadius: 'var(--radius-md)',
-              color: 'var(--primary)'
-            }}>
-              ج
-            </div>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => handleQuizAnswer(true)}
-                className="btn-primary"
-                style={{ padding: '10px 18px', fontSize: '14px' }}
-              >
-                It is "Jeem" (ج) — Middle tongue touching palate
-              </button>
-              <button
-                onClick={() => handleQuizAnswer(false)}
-                className="btn-outline"
-                style={{ padding: '10px 18px', fontSize: '14px' }}
-              >
-                It is "Khaa" (خ)
-              </button>
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--on-gold-container)' }}>
+              Letter Recognition Challenge
+            </h3>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--on-gold-container)' }}>
+              Score: {quizScore} Correct
+            </span>
           </div>
-          {quizScore && (
-            <div style={{ marginTop: '14px', fontWeight: 700, color: quizScore === 100 ? 'var(--success)' : 'var(--danger)' }}>
-              {quizScore === 100 ? '🎉 Excellent! Exactly correct.' : '❌ Not quite. Notice the single dot in the middle.'}
+
+          <p style={{ fontSize: '13px', color: 'var(--on-gold-container)', marginBottom: '16px' }}>
+            Identify the correct letter name and articulation for this symbol:
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>
+            <div className="arabic-text" style={{
+              fontSize: '64px',
+              fontWeight: 800,
+              padding: '16px 44px',
+              background: 'var(--surface)',
+              borderRadius: 'var(--radius-lg)',
+              color: 'var(--primary)',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              {quizTarget.symbol}
             </div>
-          )}
+
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              {quizOptions.map((opt) => (
+                <button
+                  key={opt.symbol}
+                  onClick={() => handleAnswerClick(opt)}
+                  className="btn-outline"
+                  style={{
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    background: 'var(--surface)',
+                    borderColor: 'var(--border)'
+                  }}
+                >
+                  {opt.name} ({opt.transliteration})
+                </button>
+              ))}
+            </div>
+
+            {quizFeedback === 'correct' && (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: 'var(--success)', fontWeight: 800, fontSize: '15px' }}>
+                  🎉 Masha'Allah! Correct: {quizTarget.name} — {quizTarget.makhraj}
+                </span>
+                <button
+                  onClick={initQuizQuestion}
+                  className="btn-primary"
+                  style={{ padding: '8px 20px', fontSize: '13px' }}
+                >
+                  Next Letter Challenge →
+                </button>
+              </div>
+            )}
+
+            {quizFeedback === 'wrong' && (
+              <div style={{ color: 'var(--danger)', fontWeight: 700, fontSize: '14px' }}>
+                ❌ Not quite. Notice the shape and dot position. Try again!
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -283,7 +381,7 @@ export const NooraniQaidaPage: React.FC<NooraniQaidaPageProps> = ({
             style={{ padding: '12px 24px', fontSize: '14px' }}
           >
             <Volume2 size={18} />
-            <span>Hear Pronunciation</span>
+            <span>Hear Articulation</span>
           </button>
         </div>
       )}

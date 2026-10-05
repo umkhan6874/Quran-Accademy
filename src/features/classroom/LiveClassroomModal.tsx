@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from '../../components/Modal';
-import { Mic, MicOff, Video, VideoOff, Hand, Send, CheckCircle, Clock, School, Award, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Video, VideoOff, Hand, Send, CheckCircle, Clock, School, Award, Sparkles, Volume2 } from 'lucide-react';
 import { ayahsDataMap } from '../../data/quranData';
 
 interface LiveClassroomModalProps {
@@ -22,6 +22,7 @@ export const LiveClassroomModal: React.FC<LiveClassroomModalProps> = ({
   const [cameraOn, setCameraOn] = useState(true);
   const [handRaised, setHandRaised] = useState(false);
   const [activeAyah, setActiveAyah] = useState(1);
+  const [secondsRemaining, setSecondsRemaining] = useState(25 * 60); // 25:00
   const [messages, setMessages] = useState<Array<{ sender: string; text: string; time: string }>>([
     { sender: teacherName, text: 'Assalamu Alaikum! Welcome to today\'s Tajweed recitation lesson.', time: '10:00 AM' },
     { sender: 'System', text: `${studentName} entered the virtual classroom.`, time: '10:01 AM' },
@@ -31,6 +32,23 @@ export const LiveClassroomModal: React.FC<LiveClassroomModalProps> = ({
   const [classFinished, setClassFinished] = useState(false);
 
   const ayahs = ayahsDataMap[1] || [];
+
+  // Countdown timer
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (isOpen && !classFinished) {
+      interval = setInterval(() => {
+        setSecondsRemaining(prev => Math.max(0, prev - 1));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isOpen, classFinished]);
+
+  const formatTimer = (totalSeconds: number) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +60,7 @@ export const LiveClassroomModal: React.FC<LiveClassroomModalProps> = ({
     setTimeout(() => {
       setMessages(prev => [
         ...prev,
-        { sender: teacherName, text: 'Ahsant! Very clear pronunciation. Notice the Sukoon on the letter Noon.', time: 'Just now' }
+        { sender: teacherName, text: 'Ahsant! Very clear pronunciation. Notice the Sukoon and clean articulation.', time: 'Just now' }
       ]);
     }, 1200);
   };
@@ -76,7 +94,7 @@ export const LiveClassroomModal: React.FC<LiveClassroomModalProps> = ({
           </div>
           <h3 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px' }}>Class Successfully Completed!</h3>
           <p style={{ fontSize: '15px', color: 'var(--text-muted)', maxWidth: '480px', margin: '0 auto 20px auto' }}>
-            Masha'Allah! You practiced 30 minutes of live 1-on-1 Quran tutoring with {teacherName}.
+            Masha'Allah! You completed your live 1-on-1 Quran tutoring session with {teacherName}.
           </p>
           <div style={{
             display: 'inline-flex',
@@ -114,8 +132,7 @@ export const LiveClassroomModal: React.FC<LiveClassroomModalProps> = ({
                 width: '10px',
                 height: '10px',
                 borderRadius: '50%',
-                background: '#10B981',
-                animation: 'pulse 1.5s infinite'
+                background: '#10B981'
               }} />
               <div>
                 <h4 style={{ fontSize: '16px', fontWeight: 700 }}>Live Virtual Classroom</h4>
@@ -129,10 +146,13 @@ export const LiveClassroomModal: React.FC<LiveClassroomModalProps> = ({
                 gap: '6px',
                 fontSize: '13px',
                 fontWeight: 600,
-                color: 'var(--primary)'
+                color: 'var(--primary)',
+                background: 'var(--primary-container)',
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-full)'
               }}>
                 <Clock size={16} />
-                <span>28:15 Remaining</span>
+                <span>{formatTimer(secondsRemaining)} Remaining</span>
               </div>
               <button
                 onClick={handleEndClass}

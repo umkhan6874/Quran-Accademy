@@ -2,11 +2,11 @@ import { Surah, Ayah, QaidaLesson, TajweedRule, Teacher, DuaItem } from '../type
 
 export const surahsData: Surah[] = [
   { number: 1, nameArabic: "الفَاتِحَة", nameEnglish: "Al-Fatihah", translation: "The Opener", versesCount: 7, revelationType: "Meccan" },
-  { number: 2, nameArabic: "البَقَرَة", nameEnglish: "Al-Baqarah (Ayat al-Kursi)", translation: "The Cow", versesCount: 286, revelationType: "Medinan" },
-  { number: 36, nameArabic: "يس", nameEnglish: "Ya-Sin", translation: "Ya-Sin", versesCount: 83, revelationType: "Meccan" },
-  { number: 67, nameArabic: "المُلْك", nameEnglish: "Al-Mulk", translation: "The Sovereignty", versesCount: 30, revelationType: "Meccan" },
+  { number: 2, nameArabic: "آيَةُ الْكُرْسِي", nameEnglish: "Ayat al-Kursi (2:255)", translation: "The Throne Verse", versesCount: 1, revelationType: "Medinan" },
   { number: 103, nameArabic: "العَصْر", nameEnglish: "Al-Asr", translation: "The Declining Day", versesCount: 3, revelationType: "Meccan" },
   { number: 108, nameArabic: "الكَوْثَر", nameEnglish: "Al-Kawthar", translation: "Abundance", versesCount: 3, revelationType: "Meccan" },
+  { number: 109, nameArabic: "الكَافِرُون", nameEnglish: "Al-Kafirun", translation: "The Disbelievers", versesCount: 6, revelationType: "Meccan" },
+  { number: 110, nameArabic: "النَّصْر", nameEnglish: "An-Nasr", translation: "The Divine Support", versesCount: 3, revelationType: "Medinan" },
   { number: 112, nameArabic: "الإِخْلَاص", nameEnglish: "Al-Ikhlas", translation: "The Sincerity", versesCount: 4, revelationType: "Meccan" },
   { number: 113, nameArabic: "الفَلَق", nameEnglish: "Al-Falaq", translation: "The Daybreak", versesCount: 5, revelationType: "Meccan" },
   { number: 114, nameArabic: "النَّاس", nameEnglish: "An-Nas", translation: "Mankind", versesCount: 6, revelationType: "Meccan" }
@@ -19,8 +19,41 @@ export const ayahsDataMap: Record<number, Ayah[]> = {
     { surahNumber: 1, ayahNumber: 3, arabicText: "الرَّحْمَٰنِ الرَّحِيمِ", transliteration: "Ar-Raḥmānir-Raḥīm", translation: "The Entirely Merciful, the Especially Merciful,", tafsir: "Emphasizes Allah's encompassing mercy to all creation and special mercy to believers." },
     { surahNumber: 1, ayahNumber: 4, arabicText: "مَالِكِ يَوْمِ الدِّينِ", transliteration: "Māliki Yawmid-Dīn", translation: "Sovereign of the Day of Recompense.", tafsir: "Points to the reality of the Hereafter and divine justice." },
     { surahNumber: 1, ayahNumber: 5, arabicText: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", transliteration: "Iyyāka na'budu wa iyyāka nasta'īn", translation: "It is You we worship and You we ask for help.", tafsir: "The core statement of pure Tawheed (Monotheism) and reliance upon Allah alone." },
-    { surahNumber: 1, ayahNumber: 6, arabicText: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ", transliteration: "Ihdinaṣ-ṣirāṭal-mustaqīm", translation: "Guide us to the straight path -", tafsir: "The most important supplication: seeking lifelong steadfastness upon truth." },
-    { surahNumber: 1, ayahNumber: 7, arabicText: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ", transliteration: "Ṣirāṭalladhīna an'amta 'alayhim ghayril-maghḍūbi 'alayhim walāḍ-ḍāllīn", translation: "The path of those upon whom You have bestowed favor, not of those who have evoked anger or gone astray.", tafsir: "Following the path of the Prophets, righteous, and truthful." }
+    { surahNumber: 1, ayahNumber: 6, arabicText: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ", transliteration: "Ihdinaṣ-ṣirāṭal-mustaqīm", translation: "Guide us to the straight path -", tafsir: "The fundamental supplication: seeking lifelong steadfastness upon truth." },
+    { surahNumber: 1, ayahNumber: 7, arabicText: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ", transliteration: "Ṣirāṭalladhīna an'amta 'alayhim ghayril-maghḍūbi 'alayhim walāḍ-ḍāllīn", translation: "The path of those upon whom You have bestowed favor, not of those who have evoked anger or gone astray.", tafsir: "Following the path of the Prophets, truthful, and righteous." }
+  ],
+  2: [
+    {
+      surahNumber: 2,
+      ayahNumber: 255,
+      arabicText: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+      transliteration: "Allāhu lā ilāha illā Huwal-Ḥayyul-Qayyūm, lā ta'khudhuhū sinatuw-wa lā nawm, lahū mā fis-samāwāti wa mā fil-arḍ, man dhal-ladhī yashfa'u 'indahū illā bi-idhnih, ya'lamu mā bayna aydīhim wa mā khalfahum, wa lā yuḥīṭūna bi-shay'im-min 'ilmihī illā bimā shā', wasi'a Kursiyyuhus-samāwāti wal-arḍ, wa lā ya'ūduhū ḥifẓuhumā, wa Huwal-'Aliyyul-'Aẓīm.",
+      translation: "Allah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.",
+      tafsir: "The greatest verse in the Quran, affirming absolute Tawheed, the eternal divine life, supreme knowledge, and complete power over all creation."
+    }
+  ],
+  103: [
+    { surahNumber: 103, ayahNumber: 1, arabicText: "وَالْعَصْرِ", transliteration: "Wal-'aṣr", translation: "By time,", tafsir: "Allah swears by time to emphasize the fleeting nature of human existence." },
+    { surahNumber: 103, ayahNumber: 2, arabicText: "إِنَّ الْإِنسَانَ لَفِي خُسْرٍ", transliteration: "Innal-insāna lafī khusr", translation: "Indeed, mankind is in loss,", tafsir: "Human effort ends in spiritual loss unless guided by divine revelation." },
+    { surahNumber: 103, ayahNumber: 3, arabicText: "إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ", transliteration: "Illalladhīna āmanū wa 'amiluṣ-ṣāliḥāti wa tawāṣaw bil-ḥaqqi wa tawāṣaw biṣ-ṣabr", translation: "Except for those who have believed, done righteous deeds, and advised each other to truth and patience.", tafsir: "The four universal pillars of salvation: Faith, righteous deeds, advising truth, and mutual patience." }
+  ],
+  108: [
+    { surahNumber: 108, ayahNumber: 1, arabicText: "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ", transliteration: "Innā a'ṭaynākal-Kawthar", translation: "Indeed, We have granted you, [O Muhammad], al-Kawthar.", tafsir: "Al-Kawthar denotes the abundant good in this world and the celestial basin in Paradise." },
+    { surahNumber: 108, ayahNumber: 2, arabicText: "فَصَلِّ لِرَبِّكَ وَانْحَرْ", transliteration: "Faṣalli liRabbika wan-ḥar", translation: "So pray to your Lord and sacrifice [to Him alone].", tafsir: "Sincere gratitude manifested through prayer and charitable sacrifice." },
+    { surahNumber: 108, ayahNumber: 3, arabicText: "إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ", transliteration: "Inna shāni'aka huwal-abtar", translation: "Indeed, your enemy is the one cut off.", tafsir: "Truth always endures, while its opponents are severed from lasting blessing." }
+  ],
+  109: [
+    { surahNumber: 109, ayahNumber: 1, arabicText: "قُلْ يَا أَيُّهَا الْكَافِرُونَ", transliteration: "Qul yā ayyuhal-kāfirūn", translation: "Say, \"O disbelievers,", tafsir: "A clear declaration of pure monotheistic faith." },
+    { surahNumber: 109, ayahNumber: 2, arabicText: "لَا أَعْبُدُ مَا تَعْبُدُونَ", transliteration: "Lā a'budu mā ta'budūn", translation: "I do not worship what you worship.", tafsir: "Absolute rejection of polytheism and false deities." },
+    { surahNumber: 109, ayahNumber: 3, arabicText: "وَلَا أَنتُمْ عَابِدُونَ مَا أَعْبُدُ", transliteration: "Wa lā antum 'ābidūna mā a'bud", translation: "Nor are you worshippers of what I worship.", tafsir: "Acknowledging their persistent refusal of the truth." },
+    { surahNumber: 109, ayahNumber: 4, arabicText: "وَلَا أَنَا عَابِدٌ مَّا عَبَدتُّمْ", transliteration: "Wa lā ana 'ābidum mā 'abattum", translation: "Nor will I be a worshipper of what you worship.", tafsir: "Firm, unwavering dedication to Allah alone." },
+    { surahNumber: 109, ayahNumber: 5, arabicText: "وَلَا أَنتُمْ عَابِدُونَ مَا أَعْبُدُ", transliteration: "Wa lā antum 'ābidūna mā a'bud", translation: "Nor will you be worshippers of what I worship.", tafsir: "Reiterating spiritual distinction and clarity of faith." },
+    { surahNumber: 109, ayahNumber: 6, arabicText: "لَكُمْ دِينُكُمْ وَلِيَ دِينِ", transliteration: "Lakum dīnukum wa liya dīn", translation: "For you is your religion, and for me is my religion.\"", tafsir: "Total disassociation from all compromises in belief." }
+  ],
+  110: [
+    { surahNumber: 110, ayahNumber: 1, arabicText: "إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ", transliteration: "Idhā jā'a naṣrullāhi wal-fatḥ", translation: "When the victory of Allah has come and the conquest,", tafsir: "Referring to the conquest of Mecca and the triumph of truth." },
+    { surahNumber: 110, ayahNumber: 2, arabicText: "وَرَأَيْتَ النَّاسَ يَدْخُلُونَ فِي دِينِ اللَّهِ أَفْوَاجًا", transliteration: "Wa ra'aytan-nāsa yadkhulūna fī dīnillāhi afwājā", translation: "And you see the people entering into the religion of Allah in multitudes,", tafsir: "Tribes entering Islam in vast groups after seeing the truth." },
+    { surahNumber: 110, ayahNumber: 3, arabicText: "فَسَبِّحْ بِحَمْدِ رَبِّكَ وَاسْتَغْفِرْهُ ۚ إِنَّهُ كَانَ تَوَّابًا", transliteration: "Fasabbiḥ biḥamdi Rabbika wastaghfirh, innahū kāna Tawwābā", translation: "Then exalt [Him] with praise of your Lord and ask forgiveness of Him. Indeed, He is ever Accepting of repentance.", tafsir: "Responding to triumph with humility, praise, and seeking forgiveness." }
   ],
   112: [
     { surahNumber: 112, ayahNumber: 1, arabicText: "قُلْ هُوَ اللَّهُ أَحَدٌ", transliteration: "Qul Huwallāhu Aḥad", translation: "Say, \"He is Allah, [who is] One,", tafsir: "Affirms absolute divine oneness with no partners." },
@@ -42,16 +75,6 @@ export const ayahsDataMap: Record<number, Ayah[]> = {
     { surahNumber: 114, ayahNumber: 4, arabicText: "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ", transliteration: "Min sharril-waswāsil-khannās", translation: "From the evil of the retreating whisperer -", tafsir: "Protection from the stealthy devil." },
     { surahNumber: 114, ayahNumber: 5, arabicText: "الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ", transliteration: "Alladhī yuwaswisu fī ṣudūrin-nās", translation: "Who whispers into the breasts of mankind -", tafsir: "Safeguarding inner heart and thoughts." },
     { surahNumber: 114, ayahNumber: 6, arabicText: "مِنَ الْجِنَّةِ وَالنَّاسِ", transliteration: "Minal-jinnati wan-nās", translation: "From among the jinn and mankind.\"", tafsir: "Recognizing evil influences from visible and unseen realms." }
-  ],
-  103: [
-    { surahNumber: 103, ayahNumber: 1, arabicText: "وَالْعَصْرِ", transliteration: "Wal-'aṣr", translation: "By time,", tafsir: "Allah swears by time to denote the precious nature of life." },
-    { surahNumber: 103, ayahNumber: 2, arabicText: "إِنَّ الْإِنسَانَ لَفِي خُسْرٍ", transliteration: "Innal-insāna lafī khusr", translation: "Indeed, mankind is in loss,", tafsir: "Human life ends in spiritual loss without guidance." },
-    { surahNumber: 103, ayahNumber: 3, arabicText: "إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ", transliteration: "Illalladhīna āmanū wa 'amiluṣ-ṣāliḥāti wa tawāṣaw bil-ḥaqqi wa tawāṣaw biṣ-ṣabr", translation: "Except for those who have believed, done righteous deeds, and advised each other to truth and patience.", tafsir: "The four universal conditions for salvation." }
-  ],
-  108: [
-    { surahNumber: 108, ayahNumber: 1, arabicText: "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ", transliteration: "Innā a'ṭaynākal-Kawthar", translation: "Indeed, We have granted you, [O Muhammad], al-Kawthar.", tafsir: "The celestial fountain in Jannah and boundless good." },
-    { surahNumber: 108, ayahNumber: 2, arabicText: "فَصَلِّ لِرَبِّكَ وَانْحَرْ", transliteration: "Faṣalli liRabbika wan-ḥar", translation: "So pray to your Lord and sacrifice [to Him alone].", tafsir: "Devotion expressed through prayer and charity." },
-    { surahNumber: 108, ayahNumber: 3, arabicText: "إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ", transliteration: "Inna shāni'aka huwal-abtar", translation: "Indeed, your enemy is the one cut off.", tafsir: "Truth always outlives hostility." }
   ]
 };
 
@@ -98,7 +121,7 @@ export const qaidaLessonsData: QaidaLesson[] = [
     id: 2,
     title: "Lesson 2: Harakat (Short Vowels)",
     titleArabic: "الْحَرَكَات: فَتْحَة، كَسْرَة، ضَمَّة",
-    description: "Master the fundamental vowels: Fatha (a), Kasra (i), and Damma (u).",
+    description: "Master the fundamental short vowels: Fatha (a), Kasra (i), and Damma (u).",
     level: "Beginner",
     items: [
       { symbol: "بَ", name: "Baa Fatha", transliteration: "Ba", makhraj: "Open short 'a' without stretching", sound: "Ba" },
@@ -152,7 +175,7 @@ export const qaidaLessonsData: QaidaLesson[] = [
       { symbol: "أَبَّ", name: "Abba", transliteration: "Abba", makhraj: "First Baa silent, second vocalized with Fatha", sound: "Abba" },
       { symbol: "أَبِّ", name: "Abbi", transliteration: "Abbi", makhraj: "First Baa silent, second vocalized with Kasra", sound: "Abbi" },
       { symbol: "أَبُّ", name: "Abbu", transliteration: "Abbu", makhraj: "First Baa silent, second vocalized with Damma", sound: "Abbu" },
-      { symbol: "إِنَّ", name: "Inna", transliteration: "Inna", makhraj: "Noon Mushaddadah - holds 2 counts of Ghunnah nasal glow", sound: "Inna" },
+      { symbol: "إِنَّ", name: "Inna", transliteration: "Inna", makhraj: "Noon Mushaddadah - holds 2 counts of Ghunnah nasal flow", sound: "Inna" },
       { symbol: "ثُمَّ", name: "Thumma", transliteration: "Thumma", makhraj: "Meem Mushaddadah - holds 2 counts of Ghunnah", sound: "Thumma" }
     ]
   }
@@ -234,8 +257,8 @@ export const teachersData: Teacher[] = [
     id: "t1",
     name: "Sheikh Ahmad Al-Masri",
     title: "Senior Quran & Tajweed Specialist",
-    qualification: "Al-Azhar University, Faculty of Islamic Studies",
-    ijazah: "Ijazah in Hafs 'an Asim (with unbroken chain to the Prophet ﷺ)",
+    qualification: "Experienced Quran & Tajweed Educator",
+    ijazah: "Certified in Tajweed & Hafs Recitation",
     subjects: ["Tajweed Rules", "Nazra Reading", "Makharij Articulation", "Tafsir"],
     languages: ["English", "Arabic"],
     experienceYears: 14,
@@ -250,8 +273,8 @@ export const teachersData: Teacher[] = [
     id: "t2",
     name: "Ustadha Fatima Khan",
     title: "Child Quran Pedagogy & Noorani Qaida Master",
-    qualification: "B.A. Islamic Studies & Child Psychology",
-    ijazah: "Certified Noorani Qaida Instructor with Sanad",
+    qualification: "Child Pedagogy & Early Quran Education Specialist",
+    ijazah: "Certified Noorani Qaida Instructor",
     subjects: ["Noorani Qaida for Kids", "Tajweed Basics", "Short Surahs", "Stories of the Prophets"],
     languages: ["English", "Urdu"],
     experienceYears: 9,
@@ -266,14 +289,14 @@ export const teachersData: Teacher[] = [
     id: "t3",
     name: "Qari Muhammad Bilal",
     title: "Hifz ul-Quran & Qira'at Mentor",
-    qualification: "Islamic University of Madinah Graduate",
-    ijazah: "Ijazah in 10 Qira'at from the Prophet's Mosque",
+    qualification: "Hifz Mentor & Quran Memorization Guide",
+    ijazah: "Quran Recitation & Memorization Mentor",
     subjects: ["Hifz Memorization", "Revision (Muraja'ah)", "Voice Modulation", "Advanced Tajweed"],
     languages: ["English", "Arabic", "Urdu"],
     experienceYears: 16,
     rating: 4.92,
     reviewsCount: 159,
-    bio: "Has guided over 40 students to full Quran memorization. Specializes in effective memory retention systems (Sabaq, Sabqi, Manzil).",
+    bio: "Has guided dozens of students to solid Quran memorization. Specializes in effective memory retention systems (Sabaq, Sabqi, Manzil).",
     gender: "male",
     availableToday: false,
     availableSlots: ["08:00 AM", "02:00 PM", "07:00 PM"]
@@ -282,14 +305,14 @@ export const teachersData: Teacher[] = [
     id: "t4",
     name: "Ustadha Maryam Siddiqui",
     title: "Youth Quran & Character Building Educator",
-    qualification: "Diploma in Quranic Sciences & Hadith",
-    ijazah: "Ijazah in Shu'bah & Hafs Recitations",
+    qualification: "Youth Quran & Character Building Educator",
+    ijazah: "Certified Quran Teacher & Youth Educator",
     subjects: ["Noorani Qaida", "Nazra", "Dua & Azkar", "Teens Mentorship"],
     languages: ["English", "Urdu"],
     experienceYears: 7,
     rating: 4.89,
     reviewsCount: 98,
-    bio: "Dedicated to creating safe, inspiring spaces for young sisters and boys to connect deeply with the Holy Quran without anxiety.",
+    bio: "Dedicated to creating safe, inspiring spaces for young sisters and boys to connect deeply with the Holy Quran with clarity and patience.",
     gender: "female",
     availableToday: true,
     availableSlots: ["11:00 AM", "03:30 PM", "06:30 PM", "08:30 PM"]
@@ -304,7 +327,7 @@ export const dailyDuasData: DuaItem[] = [
     arabic: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
     transliteration: "Al-ḥamdu lillāhil-ladhī aḥyānā ba'da mā amātanā wa ilayhin-nushūr",
     translation: "All praise is for Allah who gave us life after having taken it from us and unto Him is the resurrection.",
-    reference: "Sahih Bukhari. Expresses gratitude for a fresh day of life and faith."
+    reference: "Sahih al-Bukhari 6312"
   },
   {
     id: "dua_knowledge",
@@ -313,7 +336,7 @@ export const dailyDuasData: DuaItem[] = [
     arabic: "رَّبِّ زِدْنِي عِلْمًا",
     transliteration: "Rabbi zidnī 'ilmā",
     translation: "My Lord, increase me in knowledge.",
-    reference: "Surah Ta-Ha, 114. The recommended prayer before Quran lessons."
+    reference: "Surah Ta-Ha 20:114"
   },
   {
     id: "dua_sleep",
@@ -322,16 +345,16 @@ export const dailyDuasData: DuaItem[] = [
     arabic: "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
     transliteration: "Bismika Allāhumma amūtu wa aḥyā",
     translation: "In Your name, O Allah, I die and I live.",
-    reference: "Sahih Muslim. Enters sleep under the protection of Allah."
+    reference: "Sahih al-Bukhari 6324"
   },
   {
     id: "dua_forgiveness",
     title: "Master of Seeking Forgiveness (Sayyidul Istighfar)",
     category: "Forgiveness",
-    arabic: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ",
-    transliteration: "Allāhumma Anta Rabbī lā ilāha illā Anta, khalaqtanī wa anā 'abduka...",
-    translation: "O Allah, You are my Lord, none has the right to be worshiped but You. You created me and I am Your servant...",
-    reference: "Whoever recites it with certainty will be among the people of Paradise (Bukhari)."
+    arabic: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ",
+    transliteration: "Allāhumma Anta Rabbī lā ilāha illā Anta, khalaqtanī wa anā 'abduka, wa anā 'alā 'ahdika wa wa'dika mastaṭa'tu...",
+    translation: "O Allah, You are my Lord, none has the right to be worshiped but You. You created me and I am Your servant, and I abide by Your covenant and promise as best I can...",
+    reference: "Sahih al-Bukhari 6306"
   }
 ];
 

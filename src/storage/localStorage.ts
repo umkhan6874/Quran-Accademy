@@ -72,20 +72,14 @@ export const defaultBookmarks: Bookmark[] = [
 ];
 
 export const defaultHifz: HifzProgress[] = [
-  {
-    surahNumber: 112,
-    surahName: 'Al-Ikhlas',
-    currentRepeats: 8,
-    targetRepeats: 10,
-    status: 'in_progress'
-  },
-  {
-    surahNumber: 1,
-    surahName: 'Al-Fatihah',
-    currentRepeats: 10,
-    targetRepeats: 10,
-    status: 'mastered'
-  }
+  { surahNumber: 1, surahName: 'Al-Fatihah', currentRepeats: 10, targetRepeats: 10, status: 'mastered' },
+  { surahNumber: 103, surahName: 'Al-Asr', currentRepeats: 4, targetRepeats: 10, status: 'in_progress' },
+  { surahNumber: 108, surahName: 'Al-Kawthar', currentRepeats: 10, targetRepeats: 10, status: 'mastered' },
+  { surahNumber: 109, surahName: 'Al-Kafirun', currentRepeats: 2, targetRepeats: 10, status: 'in_progress' },
+  { surahNumber: 110, surahName: 'An-Nasr', currentRepeats: 5, targetRepeats: 10, status: 'in_progress' },
+  { surahNumber: 112, surahName: 'Al-Ikhlas', currentRepeats: 8, targetRepeats: 10, status: 'in_progress' },
+  { surahNumber: 113, surahName: 'Al-Falaq', currentRepeats: 3, targetRepeats: 10, status: 'in_progress' },
+  { surahNumber: 114, surahName: 'An-Nas', currentRepeats: 6, targetRepeats: 10, status: 'in_progress' }
 ];
 
 // Helper functions for safe local persistence
@@ -173,10 +167,15 @@ export const StorageService = {
   getHifzProgress(): HifzProgress[] {
     return safeGet<HifzProgress[]>(KEYS.HIFZ_PROGRESS, defaultHifz);
   },
+  saveHifzProgress(list: HifzProgress[]): void {
+    safeSet(KEYS.HIFZ_PROGRESS, list);
+  },
   incrementHifzRepeat(surahNumber: number): HifzProgress[] {
     const current = this.getHifzProgress();
+    let found = false;
     const updated = current.map(item => {
       if (item.surahNumber === surahNumber) {
+        found = true;
         const nextCount = item.currentRepeats + 1;
         return {
           ...item,
@@ -186,7 +185,48 @@ export const StorageService = {
       }
       return item;
     });
-    safeSet(KEYS.HIFZ_PROGRESS, updated);
+
+    if (!found) {
+      updated.push({
+        surahNumber,
+        surahName: `Surah ${surahNumber}`,
+        currentRepeats: 1,
+        targetRepeats: 10,
+        status: 'in_progress'
+      });
+    }
+
+    this.saveHifzProgress(updated);
+    return updated;
+  },
+  resetHifzRepeat(surahNumber: number): HifzProgress[] {
+    const current = this.getHifzProgress();
+    const updated = current.map(item => {
+      if (item.surahNumber === surahNumber) {
+        return {
+          ...item,
+          currentRepeats: 0,
+          status: 'in_progress' as const
+        };
+      }
+      return item;
+    });
+    this.saveHifzProgress(updated);
+    return updated;
+  },
+  setHifzTarget(surahNumber: number, target: number): HifzProgress[] {
+    const current = this.getHifzProgress();
+    const updated = current.map(item => {
+      if (item.surahNumber === surahNumber) {
+        return {
+          ...item,
+          targetRepeats: target,
+          status: item.currentRepeats >= target ? ('mastered' as const) : ('in_progress' as const)
+        };
+      }
+      return item;
+    });
+    this.saveHifzProgress(updated);
     return updated;
   },
 

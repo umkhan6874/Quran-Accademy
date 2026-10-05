@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { HifzProgress } from '../types';
-import { Target, Repeat, ArrowLeft, Award, Sparkles, CheckCircle, BookOpen } from 'lucide-react';
+import { Target, Repeat, ArrowLeft, Award, Sparkles, CheckCircle, BookOpen, RotateCcw } from 'lucide-react';
 import { FreeBadge } from '../components/FreeBadge';
 import confetti from 'canvas-confetti';
 
@@ -8,26 +8,66 @@ interface HifzPageProps {
   onBack: () => void;
   hifzProgress: HifzProgress[];
   onIncrementRepeat: (surahNumber: number) => void;
+  onResetRepeat?: (surahNumber: number) => void;
+  onSetTarget?: (surahNumber: number, target: number) => void;
 }
 
 export const HifzPage: React.FC<HifzPageProps> = ({
   onBack,
   hifzProgress,
-  onIncrementRepeat
+  onIncrementRepeat,
+  onResetRepeat,
+  onSetTarget
 }) => {
   const [selectedSurahNumber, setSelectedSurahNumber] = useState(112); // Surah Al-Ikhlas
+
   const currentTarget = hifzProgress.find(h => h.surahNumber === selectedSurahNumber) || {
-    surahNumber: 112,
+    surahNumber: selectedSurahNumber,
     surahName: 'Al-Ikhlas',
-    currentRepeats: 8,
+    currentRepeats: 0,
     targetRepeats: 10,
     status: 'in_progress' as const
+  };
+
+  const playChime = (highPitch = false) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.setValueAtTime(highPitch ? 880 : 520, ctx.currentTime);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      }
+    } catch {
+      // AudioContext fallback
+    }
   };
 
   const handleRepeat = () => {
     onIncrementRepeat(selectedSurahNumber);
     if (currentTarget.currentRepeats + 1 >= currentTarget.targetRepeats) {
+      playChime(true);
       confetti({ particleCount: 80, spread: 70 });
+    } else {
+      playChime(false);
+    }
+  };
+
+  const handleReset = () => {
+    if (onResetRepeat) {
+      onResetRepeat(selectedSurahNumber);
+    }
+  };
+
+  const handleSelectTarget = (target: number) => {
+    if (onSetTarget) {
+      onSetTarget(selectedSurahNumber, target);
     }
   };
 
@@ -67,11 +107,33 @@ export const HifzPage: React.FC<HifzPageProps> = ({
           ACTIVE MEMORIZATION TARGET
         </span>
         <h2 style={{ fontSize: '26px', fontWeight: 800 }}>
-          Surah {currentTarget.surahName} (الإخلاص)
+          Surah {currentTarget.surahName}
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-muted)', maxWidth: '480px' }}>
-          Repeated recitation locks verses into long-term memory. Goal: Recite 10 times to master.
+          Repeated recitation locks verses into long-term memory. Goal: Recite {currentTarget.targetRepeats} times to master.
         </p>
+
+        {/* Target Repeats Selector */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>Set Target:</span>
+          {[5, 10, 20, 40].map((t) => (
+            <button
+              key={t}
+              onClick={() => handleSelectTarget(t)}
+              style={{
+                padding: '4px 12px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '12px',
+                fontWeight: currentTarget.targetRepeats === t ? 700 : 500,
+                background: currentTarget.targetRepeats === t ? 'var(--primary)' : 'var(--surface-variant)',
+                color: currentTarget.targetRepeats === t ? '#FFFFFF' : 'var(--text-main)',
+                border: '1px solid var(--border)'
+              }}
+            >
+              {t} Repeats
+            </button>
+          ))}
+        </div>
 
         {/* Circular Dial */}
         <div style={{ position: 'relative', width: '180px', height: '180px', margin: '14px 0' }}>
@@ -114,14 +176,26 @@ export const HifzPage: React.FC<HifzPageProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={handleRepeat}
-          className="btn-primary"
-          style={{ padding: '16px 36px', fontSize: '16px' }}
-        >
-          <Repeat size={20} />
-          <span>I Recited This Ayah! (+1 Count)</span>
-        </button>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button
+            onClick={handleRepeat}
+            className="btn-primary"
+            style={{ padding: '16px 36px', fontSize: '16px' }}
+          >
+            <Repeat size={20} />
+            <span>I Recited This Ayah! (+1 Count)</span>
+          </button>
+
+          <button
+            onClick={handleReset}
+            className="btn-outline"
+            style={{ padding: '16px 20px', fontSize: '14px' }}
+            title="Reset repeat counter for this Surah"
+          >
+            <RotateCcw size={16} />
+            <span>Reset</span>
+          </button>
+        </div>
 
         <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
           {currentTarget.currentRepeats >= currentTarget.targetRepeats
@@ -139,7 +213,7 @@ export const HifzPage: React.FC<HifzPageProps> = ({
           <div>
             <strong>1. Sabaq (New Lesson):</strong>
             <p style={{ fontSize: '13px', marginTop: '4px', opacity: 0.9 }}>
-              Today's fresh 3 to 5 verses. Read 15 times looking at the Mushaf, then recite to your teacher.
+              Today's fresh verses. Read 15 times looking at the Mushaf, then recite to your teacher.
             </p>
           </div>
           <div>
@@ -151,7 +225,7 @@ export const HifzPage: React.FC<HifzPageProps> = ({
           <div>
             <strong>3. Manzil (Old Memorization):</strong>
             <p style={{ fontSize: '13px', marginTop: '4px', opacity: 0.9 }}>
-              All previously memorized Juz. Cycles on a fixed weekly or bi-weekly routine for life.
+              All previously memorized Juz. Cycles on a fixed routine to preserve lifelong retention.
             </p>
           </div>
         </div>
@@ -160,45 +234,45 @@ export const HifzPage: React.FC<HifzPageProps> = ({
       {/* Short Surahs Memorization Roster */}
       <div>
         <h3 className="section-title">Short Surahs Hifz Roster</h3>
-        <p className="section-subtitle">Track your progress across Juz Amma</p>
+        <p className="section-subtitle">Click any Surah below to set it as the active memorization target</p>
 
         <div className="grid-3">
-          {[
-            { num: 1, name: 'Al-Fatihah', verses: 7, status: 'Mastered' },
-            { num: 112, name: 'Al-Ikhlas', verses: 4, status: 'In Progress (8/10)' },
-            { num: 113, name: 'Al-Falaq', verses: 5, status: 'Ready for Review' },
-            { num: 114, name: 'An-Nas', verses: 6, status: 'Ready for Review' },
-            { num: 103, name: 'Al-Asr', verses: 3, status: 'Ready for Review' },
-            { num: 108, name: 'Al-Kawthar', verses: 3, status: 'Mastered' }
-          ].map((surah) => (
-            <div
-              key={surah.num}
-              className="card"
-              onClick={() => setSelectedSurahNumber(surah.num)}
-              style={{
-                cursor: 'pointer',
-                border: `1.5px solid ${selectedSurahNumber === surah.num ? 'var(--primary)' : 'var(--border)'}`,
-                background: selectedSurahNumber === surah.num ? 'var(--primary-container)' : 'var(--surface)'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontWeight: 800, fontSize: '16px' }}>{surah.num}. {surah.name}</span>
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  padding: '3px 8px',
-                  borderRadius: 'var(--radius-sm)',
-                  background: surah.status.includes('Mastered') ? '#E8F5E9' : 'var(--gold-container)',
-                  color: surah.status.includes('Mastered') ? 'var(--success)' : 'var(--on-gold-container)'
-                }}>
-                  {surah.status}
-                </span>
+          {hifzProgress.map((surah) => {
+            const isSelected = selectedSurahNumber === surah.surahNumber;
+            const isMastered = surah.currentRepeats >= surah.targetRepeats;
+            return (
+              <div
+                key={surah.surahNumber}
+                className="card"
+                onClick={() => setSelectedSurahNumber(surah.surahNumber)}
+                style={{
+                  cursor: 'pointer',
+                  border: `2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}`,
+                  background: isSelected ? 'var(--primary-container)' : 'var(--surface)',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontWeight: 800, fontSize: '16px' }}>
+                    {surah.surahNumber}. {surah.surahName}
+                  </span>
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    padding: '3px 8px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: isMastered ? '#E8F5E9' : 'var(--gold-container)',
+                    color: isMastered ? 'var(--success)' : 'var(--on-gold-container)'
+                  }}>
+                    {isMastered ? 'Mastered ✅' : `${surah.currentRepeats}/${surah.targetRepeats}`}
+                  </span>
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  {isMastered ? 'Locked in memory' : `${surah.targetRepeats - surah.currentRepeats} repeats remaining`}
+                </div>
               </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                {surah.verses} Verses • Click to set active target
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

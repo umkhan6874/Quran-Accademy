@@ -43,10 +43,15 @@ export const App: React.FC = () => {
   const [classroomOpen, setClassroomOpen] = useState(false);
   const [activeClassroomBooking, setActiveClassroomBooking] = useState<ClassBooking | null>(null);
 
-  // Sync theme
+  // Sync theme & language direction
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', profile.theme);
-  }, [profile.theme]);
+    if (profile.preferredLanguage === 'Arabic' || profile.preferredLanguage === 'Urdu') {
+      document.documentElement.setAttribute('dir', 'rtl');
+    } else {
+      document.documentElement.setAttribute('dir', 'ltr');
+    }
+  }, [profile.theme, profile.preferredLanguage]);
 
   const navigateTo = (route: string) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -136,6 +141,16 @@ export const App: React.FC = () => {
     setHifzProgress(updated);
   };
 
+  const handleResetHifzRepeat = (surahNumber: number) => {
+    const updated = StorageService.resetHifzRepeat(surahNumber);
+    setHifzProgress(updated);
+  };
+
+  const handleSetHifzTarget = (surahNumber: number, target: number) => {
+    const updated = StorageService.setHifzTarget(surahNumber, target);
+    setHifzProgress(updated);
+  };
+
   const handleUpdateTasbeeh = (count: number) => {
     setTasbeehCount(count);
     StorageService.saveTasbeehCount(count);
@@ -211,6 +226,8 @@ export const App: React.FC = () => {
             onBack={handleBack}
             hifzProgress={hifzProgress}
             onIncrementRepeat={handleIncrementHifzRepeat}
+            onResetRepeat={handleResetHifzRepeat}
+            onSetTarget={handleSetHifzTarget}
           />
         )}
 
@@ -260,6 +277,7 @@ export const App: React.FC = () => {
             onBack={handleBack}
             bookings={bookings}
             onEnterClassroom={() => handleJoinClassroom()}
+            onAddBooking={handleConfirmBooking}
           />
         )}
 

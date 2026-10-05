@@ -146,7 +146,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 No Session Scheduled Today
               </h3>
               <p style={{ fontSize: '13px', color: 'var(--primary-container)' }}>
-                Book a free 1-on-1 trial class with a verified Al-Azhar or Madinah certified tutor.
+                Book a free 1-on-1 trial class with an experienced Quran instructor.
               </p>
             </>
           )}

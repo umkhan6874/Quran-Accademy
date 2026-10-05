@@ -100,7 +100,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <CheckCircle size={16} /> No In-App Ads
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircle size={16} /> Al-Azhar & Madinah Certified
+              <CheckCircle size={16} /> Qualified & Patient Tutors
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle size={16} /> Child & Beginner Friendly
@@ -292,7 +292,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             },
             {
               q: 'How are the Quran teachers vetted?',
-              a: 'All tutors hold degrees from prestigious Islamic universities (such as Al-Azhar University and the Islamic University of Madinah) and carry verified Ijazahs in Quranic recitation with continuous chains of narration.'
+              a: 'All instructors are experienced Quran educators proficient in Tajweed, Noorani Qaida pedagogy, and fluent recitation with structured, encouraging teaching methods for kids and beginners.'
             },
             {
               q: 'Can young children use this app independently?',
